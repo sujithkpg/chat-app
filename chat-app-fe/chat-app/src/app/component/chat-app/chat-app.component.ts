@@ -11,24 +11,50 @@ import { CommonModule } from '@angular/common';
   styleUrl: './chat-app.component.scss'
 })
 export class ChatAppComponent implements OnInit {
+  messages: Message[] = [];
+  messageContent: string = '';
+  recipient: string = '';
+  sender: string = 'user1'; // Example sender, replace with the actual sender
 
-  messages: string[] = [];
-  messageInput: string = '';
 
-  constructor(private chatService: ChatService)
-  {
-   
+  constructor(private chatService: ChatService) {}
+
+  ngOnInit(): void {
+    // Establish WebSocket connection
+    this.chatService.connect();
+
+    // Subscribe to incoming messages
+    this.chatService.getMessages().subscribe((message:any) => {
+      this.messages.push(message); // Add incoming message to the list
+    });
   }
 
-  ngOnInit():void
-  {
-    this.chatService.getMessages().subscribe((message:any)=>{
-      this.messages.push(message?.text);
-    })
-  }     
-
-  sendMessage(){
-    this.chatService.sendMessage(this.messageInput);
-    this.messageInput ="";
+  // Send a message to a specific recipient
+  sendMessage(): void {
+    const message: Message = {
+      sender: this.sender,
+      recipient: this.recipient,
+      content: this.messageContent,
+    };
+    this.chatService.sendMessage(message); // Send message through WebSocket
+    this.messageContent = ''; // Clear message input
   }
+
+  // Broadcast a message to all clients
+  broadcastMessage(): void {
+    const message: Message = {
+      sender: this.sender,
+      recipient: 'all', // Broadcasting to all
+      content: this.messageContent,
+    };
+    this.chatService.broadcastMessage(message); // Broadcast message
+    this.messageContent = ''; // Clear message input
+  }
+
+}
+
+export interface Message {
+  sender: string;
+  recipient: string;
+  content: string;
 }
