@@ -16,16 +16,16 @@ export class ChatService {
 
   constructor() {}
 
-  // Connect to WebSocket server using SockJS and Stomp
-  connect() {
-    const socket = new SockJS('http://localhost:8080/chat'); // WebSocket endpoint
+   // Connect to WebSocket server using SockJS and STOMP
+   connect() {
+    const socket = new SockJS('http://localhost:8080/chat'); // SockJS WebSocket URL
     this.stompClient = new Client({
-      brokerURL: 'ws://localhost:8080/chat', // WebSocket URL
+      webSocketFactory: () => socket,  // Use SockJS for WebSocket connection
       connectHeaders: {},
       debug: function (str) {
         console.log(str); // Logs all debug information
       },
-      reconnectDelay: 5000,
+      reconnectDelay: 5000, // Reconnect attempt delay
       onConnect: (frame) => {
         console.log('Connected: ' + frame);
 
@@ -41,30 +41,31 @@ export class ChatService {
       },
     });
 
-    this.stompClient.activate(); // Activate the connection
+    // Activate the STOMP connection using the SockJS connection
+    this.stompClient.activate();
   }
 
-  // Send message to a specific user
+  // Send message to a specific recipient
   sendMessage(message: any) {
     if (this.stompClient && this.stompClient.connected) {
       this.stompClient.publish({
-        destination: '/app/sendMessage',
-        body: JSON.stringify(message),
+        destination: '/app/sendMessage', // Destination on the server
+        body: JSON.stringify(message),  // Convert message to string
       });
     }
   }
 
   // Get messages as an observable
   getMessages() {
-    return this.messagesSubject.asObservable(); // Return an observable for messages
+    return this.messagesSubject.asObservable(); // Return observable for messages
   }
 
   // Broadcast message to all connected clients
   broadcastMessage(message: any) {
     if (this.stompClient && this.stompClient.connected) {
       this.stompClient.publish({
-        destination: '/app/broadcastMessage',
-        body: JSON.stringify(message),
+        destination: '/app/broadcastMessage',  // Destination for broadcast
+        body: JSON.stringify(message),  // Convert message to string
       });
     }
   }
