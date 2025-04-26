@@ -11,11 +11,15 @@ import { CommonModule } from '@angular/common';
   styleUrl: './chat-app.component.scss'
 })
 export class ChatAppComponent implements OnInit {
-  messages: Message[] = [];
-  messageContent: string = '';
-  recipient: string = '';
-  sender: string = 'user1'; // Example sender, replace with the actual sender
-
+  users = [
+    { name: 'User1' },
+    { name: 'User2' },
+    { name: 'User3' }
+  ];
+  
+  selectedUser: any = null;  // To store selected user
+  selectedUserMessages: Message[] = []; // To store messages for the selected user
+  messageContent: string = ''; // User's input message
 
   constructor(private chatService: ChatService) {}
 
@@ -23,32 +27,31 @@ export class ChatAppComponent implements OnInit {
     // Establish WebSocket connection
     this.chatService.connect();
 
-    // Subscribe to incoming messages
-    this.chatService.getMessages().subscribe((message:any) => {
-      this.messages.push(message); // Add incoming message to the list
+    // Listen for incoming messages
+    this.chatService.getMessages().subscribe((message: Message) => {
+      if (this.selectedUser && this.selectedUser.name === message.sender) {
+        this.selectedUserMessages.push(message);  // Add incoming messages to the chat
+      }
     });
   }
 
-  // Send a message to a specific recipient
-  sendMessage(): void {
-    const message: Message = {
-      sender: this.sender,
-      recipient: this.recipient,
-      content: this.messageContent,
-    };
-    this.chatService.sendMessage(message); // Send message through WebSocket
-    this.messageContent = ''; // Clear message input
+  // Select user and load their messages
+  selectUser(user: any) {
+    this.selectedUser = user;
+    this.selectedUserMessages = []; // Clear the chat window
   }
 
-  // Broadcast a message to all clients
-  broadcastMessage(): void {
-    const message: Message = {
-      sender: this.sender,
-      recipient: 'all', // Broadcasting to all
-      content: this.messageContent,
-    };
-    this.chatService.broadcastMessage(message); // Broadcast message
-    this.messageContent = ''; // Clear message input
+  // Send message to the selected user
+  sendMessage(): void {
+    if (this.selectedUser && this.messageContent) {
+      const message: Message = {
+        sender: 'User1', // Example: replace with actual logged-in user
+        recipient: this.selectedUser.name,
+        content: this.messageContent
+      };
+      this.chatService.sendMessage(message);  // Send message via WebSocket
+      this.messageContent = '';  // Clear the input field
+    }
   }
 
 }

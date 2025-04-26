@@ -1,12 +1,27 @@
-<div>
-  <h2>Chat</h2>
-  <div *ngFor="let message of messages">
-    <p><strong>{{ message.sender }}:</strong> {{ message.content }}</p>
+<div class="chat-container">
+  <!-- User List -->
+  <div class="user-list">
+    <div *ngFor="let user of users" (click)="selectUser(user)">
+      <div class="user">
+        <span>{{ user.name }}</span>
+      </div>
+    </div>
   </div>
-  
-  <input type="text" [(ngModel)]="messageContent" placeholder="Type a message" />
-  <input type="text" [(ngModel)]="recipient" placeholder="Recipient (optional)" />
-  
-  <button (click)="sendMessage()">Send Message</button>
-  <button (click)="broadcastMessage()">Broadcast Message</button>
+
+  <!-- Chat Window -->
+  <div class="chat-window">
+    <div class="message-box" *ngFor="let message of selectedUserMessages">
+      <div *ngIf="message.sender === selectedUser.name">
+        <div class="sent-message">{{ message.content }}</div>
+      </div>
+      <div *ngIf="message.sender !== selectedUser.name">
+        <div class="received-message">{{ message.content }}</div>
+      </div>
+    </div>
+
+    <div class="message-input">
+      <input [(ngModel)]="messageContent" placeholder="Type a message" />
+      <button (click)="sendMessage()">Send</button>
+    </div>
+  </div>
 </div>
