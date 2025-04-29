@@ -26,3 +26,20 @@
     </div>
   </div>
 </div>
+
+<form [formGroup]="fg" (ngSubmit)="onSubmit()">
+  <div>
+    <label>First Name:</label>
+    <input id="firstName">
+    <div *ngIf="fg.get('firstName')?.invalid">Invalid Name</div>
+  </div>
+  <div>
+    <label>Last Name:</label>
+    <input id="lastName">
+  </div>
+  <div>
+    <label>Email:</label>
+    <input id="email">
+  </div>
+  <button type="submit" [disabled]="fg.valid">Submit</button>
+</form>

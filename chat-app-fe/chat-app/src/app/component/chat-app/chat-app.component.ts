@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ChatService } from '../../service/chat.service';
 import { OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms'
+import { FormBuilder, FormControl, FormGroup, FormsModule, Validators,ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms'
 import { CommonModule } from '@angular/common'; 
 import { AppHighlite } from '../../directive/AppHighlight';
 import { CapsText } from '../../pipe/CapsText';
@@ -9,7 +9,7 @@ import { CapsText } from '../../pipe/CapsText';
 @Component({
   selector: 'app-chat-app',
   standalone: true,
-  imports: [FormsModule,CommonModule,AppHighlite,CapsText],
+  imports: [FormsModule,CommonModule,AppHighlite,CapsText,ReactiveFormsModule],
   templateUrl: './chat-app.component.html',
   styleUrl: './chat-app.component.scss'
 })
@@ -23,10 +23,22 @@ export class ChatAppComponent implements OnInit {
   selectedUser: any = null;  // To store selected user
   selectedUserMessages: Message[] = []; // To store messages for the selected user
   messageContent: string = ''; // User's input message
+  fg! : FormGroup;
 
-  constructor(private chatService: ChatService) {}
+
+  constructor(private chatService: ChatService,private fb: FormBuilder) {
+
+  }
 
   ngOnInit(): void {
+
+    this.fg = new FormGroup(
+      {
+        firstName: new FormControl('',[Validators.required,Validators.minLength(3),nameValidator('admin')]),
+        lastName: new FormControl('',[Validators.required,Validators.minLength(3)]),
+        email : new FormControl('',[Validators.required,Validators.email])
+    });
+
     // Establish WebSocket connection
     this.chatService.connect();
 
@@ -36,7 +48,19 @@ export class ChatAppComponent implements OnInit {
         this.selectedUserMessages.push(message);  // Add incoming messages to the chat
       }
     });
+
+    // this.initFormGroup();
   }
+
+  // initFormGroup()
+  // {
+  //   this.fg = new FormGroup(
+  //     {
+  //       firstName: new FormControl('',[Validators.required,Validators.maxLength(3)]),
+  //       lastName: new FormControl('',[Validators.required,Validators.maxLength(3)]),
+  //       email : new FormControl('',[Validators.required,Validators.email])
+  //   });
+  // }
 
   // Select user and load their messages
   selectUser(user: any) {
@@ -57,6 +81,19 @@ export class ChatAppComponent implements OnInit {
     }
   }
 
+  onSubmit()
+  {
+    alert('I am going to submit this!!');
+  }
+
+}
+
+export function nameValidator(name:string): ValidatorFn
+{
+  return (control:AbstractControl):ValidationErrors | null =>{
+    const isForbidden = control.value === name;
+    return isForbidden ?{'forbiddenName':{value:control.value}}:null;
+  }
 }
 
 export interface Message {
