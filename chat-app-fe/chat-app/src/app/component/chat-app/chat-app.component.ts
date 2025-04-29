@@ -3,10 +3,13 @@ import { ChatService } from '../../service/chat.service';
 import { OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms'
 import { CommonModule } from '@angular/common'; 
+import { AppHighlite } from '../../directive/AppHighlight';
+import { CapsText } from '../../pipe/CapsText';
 
 @Component({
   selector: 'app-chat-app',
-  imports: [FormsModule,CommonModule],
+  standalone: true,
+  imports: [FormsModule,CommonModule,AppHighlite,CapsText],
   templateUrl: './chat-app.component.html',
   styleUrl: './chat-app.component.scss'
 })

@@ -2,8 +2,9 @@
   <!-- User List -->
   <div class="user-list">
     <div *ngFor="let user of users" (click)="selectUser(user)">
-      <div class="user">
-        <span>{{ user.name }}</span>
+      <div [appHighlite]="'yellow'" [appHighliteColor]="'green'" 
+      class="user">
+        <span >{{ user.name | capsText }}</span>
       </div>
     </div>
   </div>
