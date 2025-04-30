@@ -43,3 +43,20 @@
   </div>
   <button type="submit" [disabled]="fg.valid">Submit</button>
 </form>
+
+<ng-container>
+  <h1>Counter {{countObs$ | async}}</h1>
+  <button (click)="increment()">Increment</button>
+  <h1>CounterSubject {{countSubject$ | async}}</h1>
+  <button (click)="inctrementSubject()">IncrementSubject</button>
+</ng-container>
+
+<div class="card-shadow">
+  <ng-content select="card-title"></ng-content>
+  <div class="card-divider"></div>
+  <ng-content select="card-body"></ng-content>
+</div>
+
+<div>
+  <h2>Signal value {{ counterSignal$}}</h2>
+</div>

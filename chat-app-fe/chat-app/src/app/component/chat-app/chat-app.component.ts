@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ChatService } from '../../service/chat.service';
 import { OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, Validators,ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors, ValueChangeEvent } from '@angular/forms'
@@ -7,6 +7,7 @@ import { AppHighlite } from '../../directive/AppHighlight';
 import { CapsText } from '../../pipe/CapsText';
 import {Observable, Subscriber,of} from 'rxjs';
 import {filter, map} from 'rxjs/operators'
+import { NewServiceService } from '../../service/new-service.service';
 
 @Component({
   selector: 'app-chat-app',
@@ -38,11 +39,26 @@ export class ChatAppComponent implements OnInit {
     subscriber.next('Gamage');
   });
 
-  constructor(private chatService: ChatService,private fb: FormBuilder) {
+  
+
+  constructor(private chatService: ChatService
+      ,private fb: FormBuilder
+      , private newService:NewServiceService) {
+    
 
   }
 
+  countObs$! : Observable<number> ;
+  countSubject$! : Observable<number>;
+  counterSignal$!: number;
+  
+
   ngOnInit(): void {
+
+      this.countObs$ = this.newService.getCounter$();
+      this.countSubject$ = this.newService.getCounterSubject$();
+      this.counterSignal$ = this.newService.getSignal();
+
 
     this.myObservable.subscribe({
       next: (value) => console.log(value),
@@ -111,6 +127,16 @@ export class ChatAppComponent implements OnInit {
   onSubmit()
   {
     alert('I am going to submit this!!');
+  }
+
+  increment()
+  {
+    this.newService.increment();
+  }
+
+  inctrementSubject()
+  {
+    this.newService.incrementSubject();
   }
 
 }
