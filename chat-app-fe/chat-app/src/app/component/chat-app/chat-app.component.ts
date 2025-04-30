@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { ChatService } from '../../service/chat.service';
 import { OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, Validators,ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms'
+import { FormBuilder, FormControl, FormGroup, FormsModule, Validators,ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors, ValueChangeEvent } from '@angular/forms'
 import { CommonModule } from '@angular/common'; 
 import { AppHighlite } from '../../directive/AppHighlight';
 import { CapsText } from '../../pipe/CapsText';
+import {Observable, Subscriber,of} from 'rxjs';
+import {filter, map} from 'rxjs/operators'
 
 @Component({
   selector: 'app-chat-app',
@@ -25,12 +27,32 @@ export class ChatAppComponent implements OnInit {
   messageContent: string = ''; // User's input message
   fg! : FormGroup;
 
+   myObservable = new Observable(subscriber => {
+    subscriber.next('Hello');
+    subscriber.next('World');
+    subscriber.complete();
+  });
+
+  newObservable = new Observable(subscriber=>{
+    subscriber.next('Sujith');
+    subscriber.next('Gamage');
+  });
 
   constructor(private chatService: ChatService,private fb: FormBuilder) {
 
   }
 
   ngOnInit(): void {
+
+    this.myObservable.subscribe({
+      next: (value) => console.log(value),
+      complete: () => console.log('Observable is complete')
+    });
+
+    this.newObservable.subscribe({
+      next: (value) =>console.log(value),
+      complete:( ) => console.log('Finish second observable')
+    });
 
     this.fg = new FormGroup(
       {
@@ -48,6 +70,11 @@ export class ChatAppComponent implements OnInit {
         this.selectedUserMessages.push(message);  // Add incoming messages to the chat
       }
     });
+
+    of(1,2,3).pipe(map(value => value *2)).subscribe( console.log);
+    of(1,5,3).pipe(filter(value=> value>3)).subscribe(
+      console.log
+    )
 
     // this.initFormGroup();
   }
