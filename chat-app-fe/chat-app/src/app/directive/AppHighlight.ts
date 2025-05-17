@@ -16,6 +16,7 @@ export class AppHighlite implements OnInit{
     }
 
     ngOnInit(): void {
+      this.element.nativeElement.backgroundColor ="red";
         this.renderer.setStyle( this.element.nativeElement,'background-color',this.appHighlite);
         if (this.appHighliteColor) {
             this.renderer.setStyle(this.element.nativeElement, 'color', this.appHighliteColor);

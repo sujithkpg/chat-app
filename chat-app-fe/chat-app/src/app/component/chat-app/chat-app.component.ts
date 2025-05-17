@@ -22,6 +22,8 @@ export class ChatAppComponent implements OnInit {
     { name: 'User2' },
     { name: 'User3' }
   ];
+
+  employeeList: Array<String> = new Array;
   
   selectedUser: any = null;  // To store selected user
   selectedUserMessages: Message[] = []; // To store messages for the selected user
@@ -54,6 +56,15 @@ export class ChatAppComponent implements OnInit {
   
 
   ngOnInit(): void {
+
+    this.employeeList.push('Sujith');
+    this.employeeList.push('Gamage');
+
+    this.employeeList = this.employeeList.map(employee=> employee +'Test');
+
+    this.employeeList.forEach((employee,index,array)=>{
+      employee = array[index] +'Test';
+    })
 
       this.countObs$ = this.newService.getCounter$();
       this.countSubject$ = this.newService.getCounterSubject$();
